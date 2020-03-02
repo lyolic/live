@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+	<script> 
+			var canvasWidth;
+			var canvasHeight;
+			var ids = [,];
+			var canvas;
+			var ctx;
+			var count=0;
+			glider_gun = [
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+ [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+ [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
+ 
+ spacesheep = [[0, 0, 1, 1, 0],
+             [1, 1, 0, 1, 1],
+             [1, 1, 1, 1, 0],
+             [0, 1, 1, 0, 0]];
+ 
+diehard = [[0, 0, 0, 0, 0, 0, 1, 0],
+           [1, 1, 0, 0, 0, 0, 0, 0],
+           [0, 1, 0, 0, 0, 1, 1, 1]];
+ 
+boat = [[1, 1, 0],
+        [1, 0, 1],
+        [0, 1, 0]];
+ 
+r_pentomino = [[0, 1, 1],
+               [1, 1, 0],
+               [0, 1, 0]];
+ 
+beacon = [[0, 0, 1, 1],
+          [0, 0, 1, 1],
+          [1, 1, 0, 0],
+          [1, 1, 0, 0]];
+ 
+acorn = [[0, 1, 0, 0, 0, 0, 0],
+         [0, 0, 0, 1, 0, 0, 0],
+         [1, 1, 0, 0, 1, 1, 1]];
+		 
+		 
+		 
+	   window.onload = function() {
+			  canvas = document.getElementById('canvas');
+			  ctx = canvas.getContext('2d');
+			  canvasWidth = canvas.width;
+			  canvasHeight = canvas.height;
+			  ctx.fillStyle = "#000000";
+			  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+			  
+			  
+			  clearrect = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+			  ids[0] =  ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+			  ids[1] =  ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+			  console.log(glider_gun.length);
+			  for(var i = 0; i < glider_gun.length; i++)
+				for(var j = 0; j < glider_gun[i].length; j++){
+					if(glider_gun[i][j]==1) setpixel(ids[0],1+j,1+i, 255);
+					console.log(glider_gun[i].length);
+					}
+					
+			  /*setpixel(ids[0],10,10, 255);
+			  setpixel(ids[0],11,11, 255);
+			  setpixel(ids[0],10,11, 255);
+			  setpixel(ids[0],10,12, 255);*/
+			  ctx.putImageData(ids[0], 0, 0);
+			  setTimeout(timer, 1000);
+
+	  }
+
+	  function timer()
+		{  
+			for(var i=0;i<canvasWidth;i++)
+				for(var j=0;j<canvasHeight;j++){
+					var gN = getNeighbors(ids[count%2],i,j)
+					if(!getpixel(ids[count%2],i,j))
+						if (gN ==3 )
+							setpixel(ids[(count+1)%2],i,j, 255); 
+						else 
+							setpixel(ids[(count+1)%2],i,j, 0);
+					else 
+						if(!((gN==2)||(gN==3)))
+							setpixel(ids[(count+1)%2],i,j, 0);
+						else
+							setpixel(ids[(count+1)%2],i,j, 255);
+				}
+							
+		count++;			
+		ctx.putImageData(ids[count%2], 0, 0);
+		//alert();
+		setTimeout(timer, 20);
+		}
+		
+		function getNeighbors(id, x, y) {
+		 var n = 0
+		 var cords = [[1,1],[-1,-1],[0,1],[0,-1],[1,0],[-1,0],[-1,1],[1,-1]];
+		 for(cord of cords)
+			if( ((x+cord[0])<canvasWidth) && ((x+cord[0])>=0) && ((y+cord[1])<canvasHeight) && ((y+cord[1])>=0) && getpixel( id, x+cord[0], y+cord[1])) n++;
+		 return n;
+		}
+		
+		function setpixel( id, x, y, c) {
+			var pixels = id.data;
+	  		var off = (y * id.width + x) * 4;
+			pixels[off] = c;
+			pixels[off + 1] = c;
+			pixels[off + 2] = c;
+			pixels[off + 3] = 255;
+		}
+		function getpixel( id, x, y) {
+			var pixels = id.data;
+	  		var off = (y * id.width + x) * 4;
+			if (pixels[off] === 255) return true; else return false;
+		}
+	  </script>
+   
+  </head>
+<body background-color=#fc0>
+  
+   
+  <canvas id="canvas" width="200" height="200">
+  
+  
+</body>
+
+</html>
